@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Shot Sim</title>
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,6 +17,7 @@
     -webkit-tap-highlight-color: transparent;
     user-select: none;
     -webkit-user-select: none;
+    touch-action: manipulation;
   }
 
   img {
@@ -27,10 +28,18 @@
     height: auto;
     cursor: pointer;
     transition: transform 0.06s ease;
+    touch-action: manipulation;
   }
 
-  img:active {
+  img:active, img.pressed {
     transform: scale(0.985);
+  }
+
+  @media (max-width: 600px) {
+    img {
+      max-width: 85vw;
+      max-height: 60vh;
+    }
   }
 </style>
 </head>
@@ -66,6 +75,11 @@
     src.start(0);
     activeSource = src;
   }
+
+  // Touch press effect (mobile doesn't reliably fire :active)
+  img.addEventListener('touchstart', () => img.classList.add('pressed'), { passive: true });
+  img.addEventListener('touchend', () => img.classList.remove('pressed'), { passive: true });
+  img.addEventListener('touchcancel', () => img.classList.remove('pressed'), { passive: true });
 
   img.addEventListener('click', async () => {
     await init();
